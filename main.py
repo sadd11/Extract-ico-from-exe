@@ -13,7 +13,7 @@ ctk.set_default_color_theme("blue")
 
 
 def extract_icon_pil(exe_path: str, size: int = 64) -> Image.Image | None:
-    """Извлекает иконку из EXE заданной ширины/высоты в формате PIL Image."""
+    """Extracts an icon from an EXE file with the specified width/height as a PIL Image."""
     try:
         large_icons, _ = win32gui.ExtractIconEx(exe_path, 0)
         if not large_icons:
@@ -53,7 +53,7 @@ def extract_icon_pil(exe_path: str, size: int = 64) -> Image.Image | None:
 
         return img
     except Exception as e:
-        print(f"Ошибка при извлечении: {e}")
+        print(f"Extraction error: {e}")
         return None
 
 
@@ -74,39 +74,39 @@ class IconExtractorApp(ctk.CTk):
         self.main_frame = ctk.CTkFrame(self, corner_radius=12)
         self.main_frame.pack(padx=20, pady=20, fill="both", expand=True)
 
-        # Заголовок
+        # Header
         self.title_label = ctk.CTkLabel(
             self.main_frame,
-            text="Извлечение иконки из EXE",
+            text="EXE Icon Extractor",
             font=ctk.CTkFont(size=20, weight="bold")
         )
         self.title_label.pack(pady=(15, 10))
 
-        # Выбор EXE файла
+        # EXE File Selection
         self.file_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         self.file_frame.pack(pady=5)
 
         self.path_entry = ctk.CTkEntry(
             self.file_frame,
-            placeholder_text="Выберите .exe файл...",
+            placeholder_text="Select a .exe file...",
             width=320
         )
         self.path_entry.pack(side="left", padx=(0, 10))
 
         self.btn_browse = ctk.CTkButton(
             self.file_frame,
-            text="Обзор...",
+            text="Browse...",
             command=self.browse_file,
             width=90
         )
         self.btn_browse.pack(side="right")
 
-        # Блок настроек (Формат и Размер)
+        # Settings Block (Format and Size)
         self.settings_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         self.settings_frame.pack(pady=10)
 
-        # Переключатель формата
-        self.format_label = ctk.CTkLabel(self.settings_frame, text="Формат:", font=ctk.CTkFont(weight="bold"))
+        # Format Switcher
+        self.format_label = ctk.CTkLabel(self.settings_frame, text="Format:", font=ctk.CTkFont(weight="bold"))
         self.format_label.pack(side="left", padx=(0, 5))
 
         self.format_var = ctk.StringVar(value="PNG")
@@ -117,8 +117,8 @@ class IconExtractorApp(ctk.CTk):
         )
         self.format_seg_btn.pack(side="left", padx=(0, 20))
 
-        # Выбор размера
-        self.size_label = ctk.CTkLabel(self.settings_frame, text="Размер:", font=ctk.CTkFont(weight="bold"))
+        # Size Selection
+        self.size_label = ctk.CTkLabel(self.settings_frame, text="Size:", font=ctk.CTkFont(weight="bold"))
         self.size_label.pack(side="left", padx=(0, 5))
 
         self.size_menu = ctk.CTkOptionMenu(
@@ -130,18 +130,18 @@ class IconExtractorApp(ctk.CTk):
         self.size_menu.set("64x64")
         self.size_menu.pack(side="left")
 
-        # Превью иконки
+        # Icon Preview
         self.preview_frame = ctk.CTkFrame(self.main_frame, width=120, height=120, corner_radius=8)
         self.preview_frame.pack(pady=10)
         self.preview_frame.pack_propagate(False)
 
-        self.preview_label = ctk.CTkLabel(self.preview_frame, text="Нет иконки")
+        self.preview_label = ctk.CTkLabel(self.preview_frame, text="No Icon")
         self.preview_label.pack(expand=True)
 
-        # Кнопка сохранения
+        # Save Button
         self.btn_save = ctk.CTkButton(
             self.main_frame,
-            text="Сохранить иконку",
+            text="Save Icon",
             command=self.save_icon,
             state="disabled",
             fg_color="#2FA572",
@@ -153,8 +153,8 @@ class IconExtractorApp(ctk.CTk):
 
     def browse_file(self):
         file_path = filedialog.askopenfilename(
-            title="Выберите исполняемый файл",
-            filetypes=[("Исполняемые файлы", "*.exe"), ("Все файлы", "*.*")]
+            title="Select Executable File",
+            filetypes=[("Executable Files", "*.exe"), ("All Files", "*.*")]
         )
         if file_path:
             self.exe_path = file_path
@@ -174,14 +174,14 @@ class IconExtractorApp(ctk.CTk):
         img = extract_icon_pil(self.exe_path, size=size)
         if img:
             self.extracted_img = img
-            # Отображение в превью с максимальным размером 96x96
+            # Render preview with a max bounds of 96x96
             preview_render_size = min(size, 96)
             ctk_img = ctk.CTkImage(light_image=img, dark_image=img, size=(preview_render_size, preview_render_size))
             self.preview_label.configure(image=ctk_img, text="")
             self.btn_save.configure(state="normal")
         else:
             self.extracted_img = None
-            self.preview_label.configure(image="", text="Не найдено")
+            self.preview_label.configure(image="", text="Not Found")
             self.btn_save.configure(state="disabled")
 
     def save_icon(self):
@@ -199,7 +199,7 @@ class IconExtractorApp(ctk.CTk):
             ext = ".png"
 
         save_path = filedialog.asksaveasfilename(
-            title="Сохранить иконку как...",
+            title="Save Icon As...",
             initialfile=default_name,
             defaultextension=ext,
             filetypes=file_types
@@ -208,15 +208,15 @@ class IconExtractorApp(ctk.CTk):
         if save_path:
             try:
                 if chosen_format == "ico":
-                    # Сохранение со стандартным набором размеров для качественного ICO
+                    # Standard size set for high-quality multi-resolution ICO files
                     ico_sizes = [(16, 16), (32, 32), (48, 48), (64, 64), (128, 128), (256, 256)]
                     self.extracted_img.save(save_path, format="ICO", sizes=ico_sizes)
                 else:
                     self.extracted_img.save(save_path, format="PNG")
 
-                messagebox.showinfo("Успех", f"Иконка успешно сохранена в формате {chosen_format.upper()}:\n{save_path}")
+                messagebox.showinfo("Success", f"Icon successfully saved in {chosen_format.upper()} format:\n{save_path}")
             except Exception as e:
-                messagebox.showerror("Ошибка", f"Не удалось сохранить файл:\n{e}")
+                messagebox.showerror("Error", f"Failed to save the file:\n{e}")
 
 
 if __name__ == "__main__":
