@@ -101,7 +101,7 @@ class IconExtractorApp(ctk.CTk):
         )
         self.btn_browse.pack(side="right")
 
-        # Settings Block (Format and Size)
+        # Settings Block
         self.settings_frame = ctk.CTkFrame(self.main_frame, fg_color="transparent")
         self.settings_frame.pack(pady=10)
 
